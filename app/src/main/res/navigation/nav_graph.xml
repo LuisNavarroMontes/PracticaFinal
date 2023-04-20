@@ -11,7 +11,11 @@
     <fragment
         android:id="@+id/favouritesFragment"
         android:name="dadm.lnavmon.practicafinal.ui.favourites.FavouritesFragment"
-        android:label="Cita favorita" />
+        android:label="Cita favorita" >
+        <action
+            android:id="@+id/action_favouritesFragment_to_deleteAllDialogFragment"
+            app:destination="@id/deleteAllDialogFragment" />
+    </fragment>
     <fragment
         android:id="@+id/settingsFragment"
         android:name="dadm.lnavmon.practicafinal.ui.settings.SettingsFragment"
@@ -20,4 +24,8 @@
         android:id="@+id/newQuotationFragment"
         android:name="dadm.lnavmon.practicafinal.ui.newquotation.NewQuotationFragment"
         android:label="Nueva cita" />
+    <dialog
+        android:id="@+id/deleteAllDialogFragment"
+        android:name="dadm.lnavmon.practicafinal.ui.favourites.DeleteAllDialogFragment"
+        android:label="DeleteAllDialogFragment" />
 </navigation>

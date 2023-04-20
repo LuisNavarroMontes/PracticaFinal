@@ -5,10 +5,17 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.map
 import androidx.lifecycle.viewModelScope
+import dadm.lnavmon.practicafinal.data.newquotation.NewQuotationRepositoryImpl
 import dadm.lnavmon.practicafinal.ui.domain.model.Quotation
+import dagger.hilt.android.lifecycle.HiltViewModel
+import data.newquotation.NewQuotationRespository
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class NewQuotationViewModel : ViewModel() {
+@HiltViewModel
+class NewQuotationViewModel @Inject constructor(
+    private val repository: NewQuotationRespository
+) : ViewModel() {
 
     private val _userName = MutableLiveData<String>().apply {
         value = getUserName()
@@ -19,6 +26,14 @@ class NewQuotationViewModel : ViewModel() {
 
     private fun getUserName(): String {
         return setOf("Alice", "Bob", "Charlie", "David", "Emma").random()
+    }
+
+    private val _errorLiveData = MutableLiveData<Throwable?>()
+    val errorLiveData: LiveData<Throwable?>
+        get() = _errorLiveData
+
+    fun resetError() {
+        _errorLiveData.value = null
     }
 
     private val _quotation = MutableLiveData<Quotation>()
@@ -42,13 +57,17 @@ class NewQuotationViewModel : ViewModel() {
     fun getNewQuotation() {
         isGettingNewQuotation.value = true
         viewModelScope.launch {
-            // Make a request to the web service to retrieve a random quotation
-            val num = (0..99).random().toString()
-            val newQuotation = Quotation(num, "Quotation text #$num", "Author #$num")
-            // Update the quotation property with the new quotation
-            _quotation.value = newQuotation
-            isGettingNewQuotation.value = false
-            _isFavoriteButtonVisible.value = true
+            repository.getNewQuotation().fold(
+                onSuccess = { quotation ->
+                    _quotation.value = quotation
+                    isGettingNewQuotation.value = false
+                    _isFavoriteButtonVisible.value = true
+                },
+                onFailure = { error ->
+                    _errorLiveData.value = error
+                    isGettingNewQuotation.value = false
+                }
+            )
         }
     }
 

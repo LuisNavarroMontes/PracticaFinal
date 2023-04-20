@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">PracticaFinal</string>
+    <string name="about">"A cerca de "</string>
+    <string name="favourite_quotations">Citas favoritas</string>
+    <string name="settings">Ajustes</string>
+    <string name="new_quotations">Nuevas citas</string>
+    <string name="favourites">Favoritos</string>
+    <string name="refresh">Refrescar</string>
+    <string name="quotationauthor">Autor de la cita</string>
+    <string name="favoutitequote">Cita favorita</string>
+    <string name="delete_all_quotations">Eliminar todas las citas</string>
+</resources>

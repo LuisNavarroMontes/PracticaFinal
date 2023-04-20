@@ -1,5 +1,7 @@
 package dadm.lnavmon.practicafinal.ui.newquotation
 
+import android.accounts.NetworkErrorException
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
@@ -10,15 +12,22 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
+import com.google.android.material.snackbar.Snackbar
 import dadm.lnavmon.practicafinal.R
 import dadm.lnavmon.practicafinal.databinding.FragmentNewQuotationBinding
+import dadm.lnavmon.practicafinal.utils.NoInternetException
+import dagger.hilt.android.AndroidEntryPoint
+import retrofit2.HttpException
+import java.net.UnknownHostException
 
+@AndroidEntryPoint
 class NewQuotationFragment : Fragment(R.layout.fragment_new_quotation), MenuProvider {
     private var _binding: FragmentNewQuotationBinding? = null
     private val binding get() = _binding!!
     private val viewModel: NewQuotationViewModel by viewModels()
     private var userName: String = ""
     private var isFavoriteButtonVisible: Boolean = false
+    @SuppressLint("StringFormatInvalid")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         _binding = FragmentNewQuotationBinding.bind(view)
@@ -49,6 +58,17 @@ class NewQuotationFragment : Fragment(R.layout.fragment_new_quotation), MenuProv
         }
         binding.btnAddToFavourites.setOnClickListener {
             viewModel.addToFavourites()
+        }
+        viewModel.errorLiveData.observe(viewLifecycleOwner) { error ->
+            val errorMessage = when (error) {
+                is NetworkErrorException -> getString(R.string.network_error_message)
+                is HttpException -> getString(R.string.http_error_message, error.code())
+                is NoInternetException -> getString(R.string.no_internet_error_message)
+                is UnknownHostException -> getString(R.string.unknown_host_error_message)
+                else -> getString(R.string.unexpected_error_message)
+            }
+            Snackbar.make(requireView(), errorMessage, Snackbar.LENGTH_LONG).show()
+            viewModel.resetError()
         }
     }
 
