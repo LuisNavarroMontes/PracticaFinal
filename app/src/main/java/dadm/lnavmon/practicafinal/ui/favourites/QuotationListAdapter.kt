@@ -7,14 +7,13 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import dadm.lnavmon.practicafinal.databinding.QuotationItemBinding
 import dadm.lnavmon.practicafinal.ui.domain.model.Quotation
-import dagger.hilt.android.AndroidEntryPoint
 
 interface ItemClicked {
     fun onClick(author: String)
 }
 
 
-class QuotationListAdapter(private val callback: ItemClicked) : ListAdapter<Quotation, QuotationListAdapter.ViewHolder>(QuotationDiff)
+class QuotationListAdapter(private val callback: FavouritesFragment) : ListAdapter<Quotation, QuotationListAdapter.ViewHolder>(QuotationDiff)
 {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val binding = QuotationItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
