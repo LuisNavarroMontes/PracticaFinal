@@ -1,11 +1,9 @@
 package dadm.lnavmon.practicafinal.ui.newquotation
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.map
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
+import dadm.lnavmon.practicafinal.data.newquotation.NewQuotationManager
 import dadm.lnavmon.practicafinal.data.newquotation.NewQuotationRepositoryImpl
+import dadm.lnavmon.practicafinal.data.settings.SettingsRepository
 import dadm.lnavmon.practicafinal.ui.domain.model.Quotation
 import dagger.hilt.android.lifecycle.HiltViewModel
 import data.newquotation.NewQuotationRespository
@@ -14,19 +12,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class NewQuotationViewModel @Inject constructor(
-    private val repository: NewQuotationRespository
+    private val manager: NewQuotationManager,
+    private val settingsRepository: SettingsRepository
 ) : ViewModel() {
-
-    private val _userName = MutableLiveData<String>().apply {
-        value = getUserName()
-    }
-
-    val userName: LiveData<String>
-        get() = _userName
-
-    private fun getUserName(): String {
-        return setOf("Alice", "Bob", "Charlie", "David", "Emma").random()
-    }
 
     private val _errorLiveData = MutableLiveData<Throwable?>()
     val errorLiveData: LiveData<Throwable?>
@@ -54,10 +42,12 @@ class NewQuotationViewModel @Inject constructor(
 
     val isGreetingsVisible: LiveData<Boolean> = quotation.map() { it.id.isEmpty() }
 
+    val userName: LiveData<String> = settingsRepository.getUsername().asLiveData()
+
     fun getNewQuotation() {
         isGettingNewQuotation.value = true
         viewModelScope.launch {
-            repository.getNewQuotation().fold(
+            manager.getNewQuotation().fold(
                 onSuccess = { quotation ->
                     _quotation.value = quotation
                     isGettingNewQuotation.value = false

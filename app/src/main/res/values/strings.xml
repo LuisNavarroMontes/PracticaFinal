@@ -18,4 +18,9 @@
     <string name="unknown_host_error_message" translatable="false">Unknown host error</string>
     <string name="unexpected_error_message" translatable="false">Unexpected error</string>
     <string name="no_internet_error_message" translatable="false">No internet error</string>
+    <string name="english">English</string>
+    <string name="russian">Russian</string>
+    <string name="username_title" translatable="false">Usuario</string>
+    <string name="username_default_value" translatable="false">Usuario</string>
+    <string name="language_title" translatable="false">Seleccione un idioma</string>
 </resources>

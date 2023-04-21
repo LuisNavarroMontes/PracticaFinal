@@ -11,9 +11,9 @@ class NewQuotationRepositoryImpl @Inject constructor(
     private val connectivityChecker: ConnectivityChecker
 ) : NewQuotationRespository {
 
-    override suspend fun getNewQuotation(): Result<Quotation> {
+    override suspend fun getNewQuotation(language:String): Result<Quotation> {
         return if (connectivityChecker.isConnectionAvailable()) {
-            dataSource.getQuotation(arrayOf("en", "ru", "xx").random()).toDomain()
+            dataSource.getQuotation(language).toDomain()
         }else {
             Result.failure(NoInternetException())
         }

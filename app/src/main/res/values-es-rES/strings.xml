@@ -10,4 +10,6 @@
     <string name="quotationauthor">Autor de la cita</string>
     <string name="favoutitequote">Cita favorita</string>
     <string name="delete_all_quotations">Eliminar todas las citas</string>
+    <string name="english">Ingles</string>
+    <string name="russian">Ruso</string>
 </resources>
