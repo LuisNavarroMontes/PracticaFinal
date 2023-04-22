@@ -46,6 +46,9 @@ class NewQuotationFragment : Fragment(R.layout.fragment_new_quotation), MenuProv
         viewModel.isGettingNewQuotation.observe(viewLifecycleOwner) { isRefreshing ->
             binding.swipeToRefresh.isRefreshing = isRefreshing == true
         }
+        viewModel.isAddToFavouritesVisible.observe(viewLifecycleOwner) { showButton ->
+            binding.btnAddToFavourites.visibility = if (showButton == true) View.VISIBLE else View.GONE
+        }
 
         binding.swipeToRefresh.setOnRefreshListener {
             viewModel.getNewQuotation()
@@ -53,9 +56,6 @@ class NewQuotationFragment : Fragment(R.layout.fragment_new_quotation), MenuProv
         requireActivity().addMenuProvider(this, viewLifecycleOwner, Lifecycle.State.RESUMED)
         viewModel.getNewQuotation()
 
-        viewModel.isFavoriteButtonVisible.observe(viewLifecycleOwner) { isVisible ->
-            binding.btnAddToFavourites.visibility = if (isVisible == true) View.VISIBLE else View.GONE
-        }
         binding.btnAddToFavourites.setOnClickListener {
             viewModel.addToFavourites()
         }

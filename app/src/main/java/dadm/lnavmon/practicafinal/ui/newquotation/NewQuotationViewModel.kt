@@ -1,6 +1,7 @@
 package dadm.lnavmon.practicafinal.ui.newquotation
 
 import androidx.lifecycle.*
+import dadm.lnavmon.practicafinal.data.favourites.FavouritesRepository
 import dadm.lnavmon.practicafinal.data.newquotation.NewQuotationManager
 import dadm.lnavmon.practicafinal.data.newquotation.NewQuotationRepositoryImpl
 import dadm.lnavmon.practicafinal.data.settings.SettingsRepository
@@ -13,7 +14,8 @@ import javax.inject.Inject
 @HiltViewModel
 class NewQuotationViewModel @Inject constructor(
     private val manager: NewQuotationManager,
-    private val settingsRepository: SettingsRepository
+    private val settingsRepository: SettingsRepository,
+    private val favouritesRepository: FavouritesRepository
 ) : ViewModel() {
 
     private val _errorLiveData = MutableLiveData<Throwable?>()
@@ -29,13 +31,6 @@ class NewQuotationViewModel @Inject constructor(
     val quotation: LiveData<Quotation>
         get() = _quotation
 
-    private val _isFavoriteButtonVisible = MutableLiveData<Boolean>().apply {
-        value = false
-    }
-
-    val isFavoriteButtonVisible: LiveData<Boolean>
-        get() = _isFavoriteButtonVisible
-
     val isGettingNewQuotation = MutableLiveData<Boolean>().apply {
         value = false
     }
@@ -44,24 +39,30 @@ class NewQuotationViewModel @Inject constructor(
 
     val userName: LiveData<String> = settingsRepository.getUsername().asLiveData()
 
+    val isAddToFavouritesVisible = quotation.switchMap() { newQuotation ->
+        favouritesRepository.getQuotationById(newQuotation.id).asLiveData()
+    }.map() { favourite ->
+        favourite == null
+    }
+
     fun getNewQuotation() {
         isGettingNewQuotation.value = true
         viewModelScope.launch {
             manager.getNewQuotation().fold(
                 onSuccess = { quotation ->
                     _quotation.value = quotation
-                    isGettingNewQuotation.value = false
-                    _isFavoriteButtonVisible.value = true
                 },
                 onFailure = { error ->
                     _errorLiveData.value = error
-                    isGettingNewQuotation.value = false
                 }
             )
+            isGettingNewQuotation.value = false
         }
     }
 
     fun addToFavourites() {
-        _isFavoriteButtonVisible.value = false
+        viewModelScope.launch {
+            _quotation.value?.let { favouritesRepository.addQuotation(it) }
+        }
     }
 }
